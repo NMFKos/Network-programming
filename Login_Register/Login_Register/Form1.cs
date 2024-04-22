@@ -25,13 +25,13 @@ namespace Login_Register
 
         private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Form form2 = new Form();
-            form2.Show();
+            Form form2 = new Form2();
+            form2.ShowDialog();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SqlConnection conn = new SqlConnection("Data Source = DUONGDAT, Initial Catalog = PONG; Integrated Security=SSPI");
+            SqlConnection conn = new SqlConnection("Data Source=MSI;Initial Catalog=PONG;Integrated Security=True");
             try
             {
                 conn.Open();

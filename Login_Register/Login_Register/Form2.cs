@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Login_Register
 {
@@ -26,26 +27,29 @@ namespace Login_Register
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SqlConnection conn = new SqlConnection("Data Source = DUONGDAT, Initial Catalog = PONG; Integrated Security=SSPI");
+            SqlConnection conn = new SqlConnection("Data Source=MSI;Initial Catalog=PONG;Integrated Security=True");
+            string account = textBox1.Text;
+            string password = textBox2.Text;
+            string email = textBox3.Text;
+            Random rnd = new Random();
+            int id_user = rnd.Next(1, 99);
+            string user_name = textBox4.Text;
+
+            string sql = "insert into USERS(ID_user, Tên_đăng_nhập, Mật_khẩu, Email, Tên_người_dùng) values (@id_user, @Tên_đăng_nhập, @Mật_khẩu, @Email, @Tên_người_dùng)";
             try
             {
                 conn.Open();
-                string account = textBox1.Text;
-                string password = textBox2.Text;
-                string email = textBox3.Text;
-                Random rnd = new Random();
-                int id_user = rnd.Next(1,99);
-                string user_name = textBox4.Text;
-
-                string sql = "insert into USERS(id_user, Tên_đăng_nhập, Mật khẩu, Email, Tên_người_dùng) values ('" + id_user + "', '" + account + "', '" + password + "', '" + email + "' ,'" + user_name + "')";
                 SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.Connection.Open();
+                cmd.Parameters.AddWithValue("@id_user", id_user);
+                cmd.Parameters.AddWithValue("@Tên_đăng_nhập", account);
+                cmd.Parameters.AddWithValue("@Mật_khẩu", password);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Tên_người_dùng", user_name);
+
                 if (cmd.ExecuteNonQuery() > 0)
-                    Console.WriteLine("Đăng ký thành công");
+                    MessageBox.Show("Đăng ký thành công");
                 else
-                    Console.WriteLine("Đăng ký thất bại");
-
-
+                    MessageBox.Show("Đăng ký thất bại");
             }
             catch (Exception ex)
             {
