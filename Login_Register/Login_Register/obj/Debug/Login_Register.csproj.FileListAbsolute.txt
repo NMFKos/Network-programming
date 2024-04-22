@@ -1,0 +1,11 @@
+C:\Network programming\Login_Register\Login_Register\bin\Debug\Login_Register.exe.config
+C:\Network programming\Login_Register\Login_Register\bin\Debug\Login_Register.exe
+C:\Network programming\Login_Register\Login_Register\bin\Debug\Login_Register.pdb
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.csproj.AssemblyReference.cache
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.Form1.resources
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.Form2.resources
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.Properties.Resources.resources
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.csproj.GenerateResource.cache
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.csproj.CoreCompileInputs.cache
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.exe
+C:\Network programming\Login_Register\Login_Register\obj\Debug\Login_Register.pdb
