@@ -1,0 +1,34 @@
+D:\C#_WINFORM\MatchInterface\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.exe
+D:\C#_WINFORM\MatchInterface\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.deps.json
+D:\C#_WINFORM\MatchInterface\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.runtimeconfig.json
+D:\C#_WINFORM\MatchInterface\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.pdb
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.Form1.resources
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.Properties.Resources.resources
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.csproj.GenerateResource.cache
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.GeneratedMSBuildEditorConfig.editorconfig
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.AssemblyInfoInputs.cache
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.AssemblyInfo.cs
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.csproj.CoreCompileInputs.cache
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\refint\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.pdb
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.genruntimeconfig.cache
+D:\C#_WINFORM\MatchInterface\MatchInterface\obj\Debug\net8.0-windows\ref\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.exe
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.deps.json
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.runtimeconfig.json
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\bin\Debug\net8.0-windows\MatchInterface.pdb
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.Form1.resources
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.Properties.Resources.resources
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.csproj.GenerateResource.cache
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.GeneratedMSBuildEditorConfig.editorconfig
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.AssemblyInfoInputs.cache
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.AssemblyInfo.cs
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.csproj.CoreCompileInputs.cache
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\refint\MatchInterface.dll
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.pdb
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\MatchInterface.genruntimeconfig.cache
+D:\C#_WINFORM\MatchInterface - Copy\MatchInterface\obj\Debug\net8.0-windows\ref\MatchInterface.dll
