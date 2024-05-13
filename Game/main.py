@@ -12,10 +12,12 @@ app.configure(bg='green')
 app.resizable(False, False)
 
 def offline_mode():
+    pygame.mixer.music.stop()
     app.destroy()
     subprocess.run(['python', 'Ponggame.py'])
 
 def pve_mode():
+    pygame.mixer.music.stop()
     app.destroy()
     subprocess.run(['python', 'PongCPU.py'])
 
