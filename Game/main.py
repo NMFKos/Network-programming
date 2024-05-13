@@ -15,11 +15,15 @@ def offline_mode():
     pygame.mixer.music.stop()
     app.destroy()
     subprocess.run(['python', 'Ponggame.py'])
+    subprocess.run(['python', 'main.py'])
+    exit()
 
 def pve_mode():
     pygame.mixer.music.stop()
     app.destroy()
     subprocess.run(['python', 'PongCPU.py'])
+    subprocess.run(['python', 'main.py'])
+    exit()
 
 def return_home():
     btn_play.place(x=370, y=300)
