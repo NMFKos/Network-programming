@@ -4,16 +4,32 @@
 
 
 from pathlib import Path
-
+import pymysql
+from Game import login_register
+from Game.login_register import id_user
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\ngocb\Downloads\build\assets\frame0")
+ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame0")
+
+connection = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='123456',
+    database='pong'
+)
+cursor = connection.cursor()
+cursor.execute("SELECT ID_user, email, Tên_người_dùng FROM users")
+rows = cursor.fetchall()
+id = [row[0] for row in rows]
+email = [row[1] for row in rows]
+name = [row[2] for row in rows]
 
 
+connection.close()
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
@@ -116,7 +132,7 @@ canvas.create_text(
     464.0,
     112.0,
     anchor="nw",
-    text="01",
+    text=id[0],
     fill="#EAEBED",
     font=("OpenSans Regular", 12 * -1)
 )
@@ -125,7 +141,7 @@ canvas.create_text(
     462.0,
     149.0,
     anchor="nw",
-    text="abc",
+    text=name[0],
     fill="#EAEBED",
     font=("OpenSans Regular", 12 * -1)
 )
@@ -134,7 +150,7 @@ canvas.create_text(
     467.0,
     187.0,
     anchor="nw",
-    text="abc@gmail.com",
+    text=email[0],
     fill="#EAEBED",
     font=("OpenSans Regular", 12 * -1)
 )
