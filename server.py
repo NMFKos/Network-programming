@@ -35,6 +35,8 @@ def client_thread(conn, player):
             if message == "READY":
                 players_ready[player] = True
                 update_log(f"Player {player + 1} is ready")
+                # Gửi thông báo đến tất cả các client
+                broadcast(f"Player {player + 1} is ready")
                 # Kiểm tra xem cả hai người chơi đã sẵn sàng chưa
                 if all(players_ready):
                     broadcast("START")
