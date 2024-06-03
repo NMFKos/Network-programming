@@ -53,6 +53,31 @@ def animate_ball():
         item2.x = random.randint(0, screen_width)
         item2.y = random.randint(0, screen_height)
 
+    # Check for a collision with the third item
+    if ball.colliderect(item3):
+        ball_speed_y *= -1
+        # Move the third item to a new random position
+        item3.x = random.randint(0, screen_width)
+        item3.y = random.randint(0, screen_height)
+
+    # Check for a collision with the fourth item
+    if ball.colliderect(item4):
+        # Double the points for the winner
+        if ball_speed_x > 0:  # Ball is moving to the right, player2 wins
+            player2_points += 2
+        else:  # Ball is moving to the left, player1 wins
+            player1_points += 2
+        # # End the round and start a new one
+        # ball.center = (screen_width // 2, screen_height // 2)  # Reset the ball's position
+        # ball_speed_y = 3 if random.choice((0, 1)) == 0 else -3  # Reset the ball's speed
+        # ball_speed_x = 3 if random.choice((0, 1)) == 0 else -3  # Reset the ball's speed
+        # player1.center = (50, screen_height // 2)  # Reset player1's position
+        # player2.center = (screen_width - 50, screen_height // 2)  # Reset player2's position
+
+        # Move the fourth item to a new random position
+        item4.x = random.randint(0, screen_width)
+        item4.y = random.randint(0, screen_height)
+
     if ball.bottom >= screen_height or ball.top <= 0:
         ball_speed_y *= -1
 
@@ -134,18 +159,32 @@ background_image = pygame.transform.scale(background_image, (screen_width, scree
 
 
 # Load the item image
-item_image = pygame.image.load('img/Icon.jpg')
+item_image = pygame.image.load('img/tangtoc.jpg')
 item_image = pygame.transform.scale(item_image, (30, 30)).convert_alpha()
 
 # Create the item
 item = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the second item image
-item2_image = pygame.image.load('img/Icon2.jpg')
-item2_image = pygame.transform.scale(item2_image, (30, 30)).convert_alpha()  # Corrected this line
+item2_image = pygame.image.load('img/giamtoc.jpg')
+item2_image = pygame.transform.scale(item2_image, (30, 30)).convert_alpha()
 
 # Create the second item
 item2 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
+
+# Load the third item image
+item3_image = pygame.image.load('img/doihuong.png')
+item3_image = pygame.transform.scale(item3_image, (30, 30)).convert_alpha()
+
+# Create the third item
+item3 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
+
+# Load the fourth item image
+item4_image = pygame.image.load('img/x2diem.png')
+item4_image = pygame.transform.scale(item4_image, (30, 30)).convert_alpha()
+
+# Create the fourth item
+item4 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 #Load and play backkground music:
 pygame.mixer.music.load('sounds/background_music.mp3')
@@ -214,6 +253,16 @@ while True:
     
     # Draw the second item
     screen.blit(item2_image, item2)
+
+    # Draw the third item
+    screen.blit(item3_image, item3)
+    
+    # Draw the fourth item
+    screen.blit(item4_image, item4)
+
+    # # Draw the fourth item only if it's not off-screen
+    # if item4.x >= 0 and item4.y >= 0:
+    #     screen.blit(item4_image, item4)
 
     # Update the display
     pygame.display.flip()
