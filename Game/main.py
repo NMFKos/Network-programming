@@ -92,4 +92,6 @@ def home(id_user, app):
     pygame.mixer.music.play(-1)
 
     home_window.mainloop()
+id_user = 98  
+home(id_user, CTk())
 

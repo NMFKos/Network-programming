@@ -19,7 +19,7 @@ font2 = ('Arial', 17, 'bold')
 font3 = ('Arial', 13, 'bold')
 font4 = ('Arial', 13, 'bold', 'underline')
 
-conn = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
+conn = mysql.connector.connect(host="localhost", user="root", password="123456", database="pong")
 cursor = conn.cursor()
 
 

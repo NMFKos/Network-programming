@@ -88,11 +88,11 @@ cpu_points, player_points = 0, 0
 score_font = pygame.font.Font(None, 100)
 
 #Load background
-background_image = pygame.image.load('img/background1.jpg').convert()
+background_image = pygame.image.load('Game/img/background1.jpg').convert()
 background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
 #Load and play backkground music:
-pygame.mixer.music.load('sounds/background_music.mp3')
+pygame.mixer.music.load('Game/sounds/background_music.mp3')
 pygame.mixer.music.play(-1)  # The -1 makes the music loop indefinitely
 
 while True:

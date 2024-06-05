@@ -5,8 +5,8 @@
 
 from pathlib import Path
 import pymysql
-from Game import login_register
-from Game.login_register import id_user
+#from Game import login_register
+#from Game.login_register import id_user
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
