@@ -20,21 +20,21 @@ window.configure(bg = "#2B5955")
 # name = [row[2] for row in rows]
 
 # Create the main window
-bg_img = CTkImage(dark_image=Image.open("assets/image_1.png"), size=(850, 500))
+bg_img = CTkImage(dark_image=Image.open("Game/assets/image_1.png"), size=(850, 500))
 bg_lab = CTkLabel(window, image=bg_img, text="")
 bg_lab.grid(row=0, column=0)
 
 # Avatar
-ava_bg = CTkImage(dark_image=Image.open("assets/image_3.png"), size=(185, 185))
+ava_bg = CTkImage(dark_image=Image.open("Game/assets/image_3.png"), size=(185, 185))
 ava_bg_lab = CTkLabel(window, image=ava_bg, text="")
 ava_bg_lab.place(x=80, y=110)
 
-ava = CTkImage(dark_image=Image.open("assets/image_4.png"), size=(120, 120))
+ava = CTkImage(dark_image=Image.open("Game/assets/image_4.png"), size=(120, 120))
 ava_lab = CTkLabel(window, image=ava, text="", bg_color='transparent')
 ava_lab.place(x=112, y=143)
 
 # Info
-info_bg = CTkImage(dark_image=Image.open("assets/image_2.png"), size=(400, 185))
+info_bg = CTkImage(dark_image=Image.open("Game/assets/image_2.png"), size=(400, 185))
 info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t0001" + "\n\nUsername: " + "Ngoc Bao" + "\n\nEmail:" + "\tngocbao@gmail.com",
                        font=("OpenSans Regular", 20), anchor='e',
                        fg_color='#FF9388', bg_color='transparent', justify='left')
