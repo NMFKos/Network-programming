@@ -18,7 +18,8 @@ def Find():
             NotFound_label.place(x=260, y=200)
             print("No user found")
         else:
-            
+            Found_label = CTkLabel(window, text="User Found", font=("OpenSans Regular", 20))
+            Found_label.place(x=260, y=200)
             print("User found")
         
     except Exception as e:
