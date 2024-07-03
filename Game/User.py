@@ -13,7 +13,10 @@ load_dotenv()
 config = dotenv_values(".env") 
 
 new_image_path = None
-
+HOST = os.getenv("HOST")
+USER = os.getenv("USER")
+DATABASE = os.getenv("DATABASE")
+PASSWORD = os.getenv("PASSWORD")
 def change_image(image_label, id, event=None):
     global new_image_path
     file_path = filedialog.askopenfilename(
@@ -28,8 +31,7 @@ def save_image_change(id):
     global new_image_path
     if new_image_path:
         # Update the image path in the database
-        connection = mysql.connector.connect(host=os.getenv("HOST"), user=os.getenv("USER")
-                                             , password=os.getenv("PASSWORD"), database=os.getenv("DATABASE"))
+        connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
         cursor = connection.cursor()
         cursor.execute("UPDATE USERS SET image_path = %s WHERE id_user = %s", [new_image_path, id[0],])
         connection.commit()
@@ -49,13 +51,13 @@ def profile_info(id, main_app):
     window.configure(bg = "#2B5955")
     main_app.withdraw()
 
-    connection = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
+    connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
     cursor = connection.cursor()
     cursor.execute("SELECT id_user, email, Tên_người_dùng, image_path FROM USERS where id_user = %s", [id,])
     rows = cursor.fetchall()
-    id = [row[0] for row in rows]
-    email = [row[2] for row in rows]
-    name = [row[1] for row in rows]
+    id_user = [row[0] for row in rows]
+    email = [row[1] for row in rows]
+    name = [row[2] for row in rows]
     image_path = [row[3] for row in rows]
     
     # Create the main window
@@ -81,7 +83,7 @@ def profile_info(id, main_app):
 
     # Info
     info_bg = CTkImage(dark_image=Image.open("./assets/image_2.png"), size=(400, 185))
-    info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t" + str(id[0]) + "\n\nUsername: " + str(name[0]) + "\n\nEmail:" + "\t" + str(email[0]),
+    info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t" + str(id_user[0]) + "\n\nUsername: " + str(name[0]) + "\n\nEmail:" + "\t" + str(email[0]),
                         font=("OpenSans Regular", 20), anchor='e',
                         fg_color='#FF9388', bg_color='transparent', justify='left')
     info_bg_lab.place(x=350, y=110)
@@ -104,11 +106,10 @@ def profile_info(id, main_app):
                         bg_color='transparent', corner_radius=10)
     friend_btn.place(x=370, y=350)
 
-    find_user_btn = CTkButton(window, text='Tìm bạn bè',command=lambda:Find(window), width=120, height=50,
+    find_user_btn = CTkButton(window, text='Tìm bạn bè',command=lambda:Find(window,id), width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
                         bg_color='transparent', corner_radius=10)
     find_user_btn.place(x=630, y=350)
 
     window.resizable(False, False)
     window.mainloop()
-

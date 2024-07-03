@@ -54,6 +54,7 @@ def login_register():
 
 
     def signup():
+        global id_user
         id_user = generate_random_two_digit_number()
         username = username_entry.get()
         password = password_entry.get()
@@ -232,6 +233,7 @@ def login_register():
     login_button.place(x=435,y=420)
 
     app.mainloop()
+    return id_user
 
 if __name__ == "__main__":
     login_register()

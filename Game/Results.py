@@ -2,13 +2,37 @@ from pathlib import Path
 import mysql.connector
 from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkToplevel
 from PIL import Image    
-# from FindUser import Find
+
+import os
+
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()
+config = dotenv_values(".env")
+HOST = os.getenv("HOST")
+USER = os.getenv("USER")
+DATABASE = os.getenv("DATABASE")
+PASSWORD = os.getenv("PASSWORD")
 def go_back(window, main_app):
     window.withdraw()
     main_app.deiconify()
-def Result(rows, main_app):
+
+def add_fr(id1, id2):
+    connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
+    cursor = connection.cursor()
+    print(type(id1), type(id2))
+    for i in id2:
+        print(i)
+    print(id1)
+    try:
+        cursor.execute("INSERT INTO FRIENDS (id_user1, id_user2) VALUES (%s, %s)", [id1, id2[0]])
+        print("Successfully added friend")
+    except:
+        print("Failed to add friend")
     
-    id = [row[0] for row in rows]
+def Result(rows, main_app, id1):
+    
+    
+    id2 = [row[0] for row in rows]
     username = [row[1] for row in rows]
     email = [row[3] for row in rows]
 
@@ -33,7 +57,7 @@ def Result(rows, main_app):
 
     # Info
     info_bg = CTkImage(dark_image=Image.open("./assets/image_2.png"), size=(400, 185))
-    info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t" + str(id[0]) + "\n\nUsername: " + str(username[0]) + "\n\nEmail:" + "\t" + str(email[0]),
+    info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t" + str(id2[0]) + "\n\nUsername: " + str(username[0]) + "\n\nEmail:" + "\t" + str(email[0]),
                         font=("OpenSans Regular", 20), anchor='e',
                         fg_color='#FF9388', bg_color='transparent', justify='left')
     info_bg_lab.place(x=350, y=110)
@@ -44,17 +68,13 @@ def Result(rows, main_app):
                         bg_color='transparent', corner_radius=10)
     back_btn.place(x=10, y=20)
 
-    # History button
-    history_btn = CTkButton(window, text='Lịch sử đấu', width=120, height=50,
-                            fg_color='#407777', hover_color='#FF7B81',
-                            bg_color='transparent', corner_radius=10)
-    history_btn.place(x=110, y=350)
+    
 
     # friend button
-    friend_btn = CTkButton(window, text='Danh sách bạn bè', width=120, height=50,
+    friend_btn = CTkButton(window, text='Thêm bạn bè', width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
-                        bg_color='transparent', corner_radius=10)
-    friend_btn.place(x=470, y=350)
+                        bg_color='transparent', corner_radius=10, command=lambda:add_fr(id1, id2))
+    friend_btn.place(x=370, y=350)
 
     window.resizable(False, False)
     window.mainloop()

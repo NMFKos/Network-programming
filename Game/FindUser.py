@@ -12,7 +12,7 @@ config = dotenv_values(".env")
 def go_back(window, main_app):
     window.withdraw()
     main_app.deiconify()
-def Find(main_app):
+def Find(main_app, id1):
     def Find_user():
         global result
         # Connect to the database
@@ -26,10 +26,10 @@ def Find(main_app):
             result = cursor.fetchall()
             if result == []:
                 NotFound_label = CTkLabel(window, text="User Not Found", font=("OpenSans Regular", 20))
-                NotFound_label.place(x=260, y=200)
+                NotFound_label.place(x=220, y=220)
                 print("No user found")
             else:
-                Result(result, window)
+                Result(result, window, id1)
             
         except Exception as e:
             print(e)
@@ -52,8 +52,12 @@ def Find(main_app):
     Name_tb.place(x=270, y=120)
 
 
-    Find_btn = CTkButton(window, text="Find", height = 30, width = 50, command=Find_user).place(x=260, y=200)
+    Find_btn = CTkButton(window, text="Find", height = 30, width = 50, command=Find_user).place(x=260, y=170)
 
     back_btn = CTkButton(window, text= "Quay lại", width= 120, height=30, command=lambda:go_back(window, main_app)).place(x=10, y =10)
 
     window.mainloop()
+if __name__ == "__main__":
+    root = CTk()
+    Find(root, id1)
+    root.mainloop()

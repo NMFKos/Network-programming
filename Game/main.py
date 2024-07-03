@@ -114,8 +114,3 @@ def home(id_user, app):
     pygame.mixer.music.play(-1)
 
     home_window.mainloop()
-
-if __name__ == "__main__":
-    id_user = 85  
-    home(id_user, CTk())
-
