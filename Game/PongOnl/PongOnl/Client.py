@@ -17,13 +17,10 @@ pygame.display.set_caption("Multiplayer Pong Game")
 white = (255, 255, 255)
 black = (0, 0, 0)
 
-# Game objects
-player_width = 10
-player_height = 50
-
 # Player rectangles
-player1 = pygame.Rect(25, screen_height // 2 - player_height // 2, player_width, player_height)
-player2 = pygame.Rect(screen_width - 25 - player_width, screen_height // 2 - player_height // 2, player_width, player_height)
+player_width = 10
+player1 = pygame.Rect(25, screen_height // 2 - 25, player_width, 50)
+player2 = pygame.Rect(screen_width - 25 - player_width, screen_height // 2 - 25, player_width, 50)
 
 # Ball rectangle
 ball = pygame.Rect(screen_width // 2 - 5, screen_height // 2 - 5, 10, 10)
@@ -53,13 +50,14 @@ try:
     if not data:
         raise Exception("No data received from server")
     data = pickle.loads(data)
-    player_id, ball_position, player_positions, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed = data
+    player_id, ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner = data
     ball.x, ball.y = ball_position
     ball.width, ball.height = ball_size
     if ball2_active:
         ball2.x, ball2.y = ball2_position
         ball2.width, ball2.height = ball_size
     player1.y, player2.y = player_positions
+    player1.height, player2.height = player_heights
     player1_score, player2_score = player_scores
 except Exception as e:
     print(f"Error receiving initial data from server: {e}")
@@ -124,13 +122,14 @@ while running:
         if not data:
             raise Exception("No data received from server")
         data = pickle.loads(data)
-        ball_position, player_positions, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed = data
+        ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner = data
         ball.x, ball.y = ball_position
         ball.width, ball.height = ball_size
         if ball2_active:
             ball2.x, ball2.y = ball2_position
             ball2.width, ball2.height = ball_size
         player1.y, player2.y = player_positions
+        player1.height, player2.height = player_heights
         player1_score, player2_score = player_scores
 
         # Update item positions
@@ -142,6 +141,14 @@ while running:
         item7.x, item7.y = item_positions[5]
         item8.x, item8.y = item_positions[6]
         item9.x, item9.y = item_positions[7]
+
+        if game_over:
+            win_text = "Player 1 wins!" if winner == 0 else "Player 2 wins!"
+            win_surface = pygame.font.Font(None, 74).render(win_text, True, white)
+            screen.blit(win_surface, (screen_width / 2 - win_surface.get_width() // 2, screen_height / 2))
+            pygame.display.update()
+            pygame.time.wait(6000)
+            running = False
     except Exception as e:
         print(f"Error receiving game state from server: {e}")
         client.close()
