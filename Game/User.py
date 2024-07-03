@@ -5,7 +5,13 @@ from tkinter import filedialog
 # Explicit imports to satisfy Flake8
 import customtkinter as ctk
 from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkToplevel
-from PIL import Image    
+from PIL import Image
+
+import os
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()
+config = dotenv_values(".env") 
+
 new_image_path = None
 
 def change_image(image_label, id, event=None):
@@ -22,7 +28,8 @@ def save_image_change(id):
     global new_image_path
     if new_image_path:
         # Update the image path in the database
-        connection = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
+        connection = mysql.connector.connect(host=os.getenv("HOST"), user=os.getenv("USER")
+                                             , password=os.getenv("PASSWORD"), database=os.getenv("DATABASE"))
         cursor = connection.cursor()
         cursor.execute("UPDATE USERS SET image_path = %s WHERE id_user = %s", [new_image_path, id[0],])
         connection.commit()

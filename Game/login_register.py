@@ -10,6 +10,12 @@ import re
 import PIL
 from PIL import Image, ImageTk
 from main import home
+
+import os
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()
+config = dotenv_values(".env")
+
 app = ctk.CTk()
 app.title('PONG GAME')
 app.geometry('850x500')
@@ -20,7 +26,8 @@ font2 = ('Arial', 17, 'bold')
 font3 = ('Arial', 13, 'bold')
 font4 = ('Arial', 13, 'bold', 'underline')
 
-conn = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
+conn = mysql.connector.connect(host=os.getenv("HOST"), user=os.getenv("USER")
+                                             , password=os.getenv("PASSWORD"), database=os.getenv("DATABASE"))
 cursor = conn.cursor()
 
 

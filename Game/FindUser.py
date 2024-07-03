@@ -3,6 +3,12 @@ import mysql.connector
 from pathlib import Path
 from PIL import Image
 from Results import Result
+
+import os
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()
+config = dotenv_values(".env")
+ 
 def go_back(window, main_app):
     window.withdraw()
     main_app.deiconify()
@@ -10,7 +16,8 @@ def Find(main_app):
     def Find_user():
         global result
         # Connect to the database
-        connection = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
+        connection = mysql.connector.connect(host=os.getenv("HOST"), user=os.getenv("USER")
+                                             , password=os.getenv("PASSWORD"), database=os.getenv("DATABASE"))
         cursor = connection.cursor()
         name = Name_tb.get()
         #print(name)
