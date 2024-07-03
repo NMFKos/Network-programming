@@ -1,10 +1,26 @@
 from customtkinter import *
+import threading
 from PIL import Image
 import subprocess
 import pygame
 from volume import modify_volume
 from User import profile_info
 # Thiết lập cửa sổ chính
+def start_server():
+    threading.Thread(target=server_thread, daemon=True).start()
+
+def start_client():
+    threading.Thread(target=client_thread, daemon=True).start()
+
+def server_thread():
+    subprocess.run(['python', './WaitingRoom/server.py'])
+
+def client_thread():
+    subprocess.run(['python', './WaitingRoom/waiting.py'])
+
+def online():
+    start_server()
+    start_client()
 
 def home(id_user, app):
     def offline_mode():
@@ -20,14 +36,20 @@ def home(id_user, app):
         subprocess.run(['python', 'PongCPU.py'])
         subprocess.run(['python', 'main.py'])
         exit()
+    
+    def pvp_mode():
+        pygame.mixer.stop()
+        home_window.destroy()
+        online()
 
     def play_sound():
         modify_volume(home_window)
     def notification():
         subprocess.run(["python3", "./Notification/Notification/Notification/notification.py"])
 
-    def profile(id_user):
-        profile_info(id_user)
+    def profile(id_user,window):
+        
+        profile_info(int(id_user), window)
 
     def return_home():
         btn_play.place(x=370, y=300)
@@ -52,7 +74,7 @@ def home(id_user, app):
         btn_offline = CTkButton(home_window, text='OFFLINE',command=offline_mode, width=120, height=50)
         btn_offline.place(x=370, y=200)
 
-        btn_online = CTkButton(home_window, text='ONLINE', width=120, height=50)
+        btn_online = CTkButton(home_window, text='ONLINE',command=pvp_mode, width=120, height=50)
         btn_online.place(x=520, y=200)
 
         btn_play.place_forget()
@@ -67,7 +89,7 @@ def home(id_user, app):
     home_window.title("PONG GAME")
     home_window.geometry("850x500")
     app.withdraw()
-
+    
     bg_img = CTkImage(dark_image=Image.open("bgmain.jpg"), size=(850, 500))
 
     bg_lab = CTkLabel(home_window, image=bg_img, text="")
@@ -78,7 +100,7 @@ def home(id_user, app):
     btn_play.place(x=370, y=300)
 
     # Tạo các tab ở đầu cửa sổ
-    tab_personal = CTkButton(home_window, text='Trang cá nhân',command=lambda:profile(id_user), width=120, height=30)
+    tab_personal = CTkButton(home_window, text='Trang cá nhân',command=lambda:profile(id_user, home_window), width=120, height=30)
     tab_personal.place(x=10, y=20)
 
     tab_notifications = CTkButton(home_window, text='Thông báo',command=notification, width=120, height=30)
@@ -92,6 +114,8 @@ def home(id_user, app):
     pygame.mixer.music.play(-1)
 
     home_window.mainloop()
-id_user = 98  
-home(id_user, CTk())
+
+if __name__ == "__main__":
+    id_user = 85  
+    home(id_user, CTk())
 

@@ -4,6 +4,7 @@ import customtkinter as ctk
 import bcrypt
 from tkinter import messagebox
 from tkinter import *
+import functools
 import subprocess
 import re
 import PIL
@@ -19,7 +20,7 @@ font2 = ('Arial', 17, 'bold')
 font3 = ('Arial', 13, 'bold')
 font4 = ('Arial', 13, 'bold', 'underline')
 
-conn = mysql.connector.connect(host="localhost", user="root", password="123456", database="pong")
+conn = mysql.connector.connect(host="localhost", user="root", password="NMFK1rit0!", database="p0ng")
 cursor = conn.cursor()
 
 
@@ -106,7 +107,9 @@ def login_register():
                 # print(f"Password entered: {password}")  # Debug print
                 # print(f"Salt: {salt}")
                 if bcrypt.hashpw(password, salt) == stored_hashed_password:
-                    id_user = cursor.execute('SELECT id_user FROM USERS WHERE Tên_đăng_nhập= %s', [username,])
+                    cursor.execute('SELECT id_user FROM USERS WHERE Tên_đăng_nhập= %s', [username,])
+                    id_user= cursor.fetchall()
+                    id_user = int(''.join(map(str, id_user[0])))
                     home(id_user, app)
                     
                 else:
