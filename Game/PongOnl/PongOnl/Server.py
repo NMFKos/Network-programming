@@ -10,10 +10,13 @@ PORT = 5555
 
 # Game state
 player_positions = [150, 150]  # Initial positions for two players
+player_heights = [50, 50]      # Initial heights for two players
 ball_position = [340, 200]     # Initial ball position
-ball_speed = [2, 2]
+ball_speed = [0.5, 0.5]
 player_scores = [0, 0]         # Player scores
 item_positions = [[random.randint(0, 650), random.randint(0, 370)] for _ in range(8)]
+game_over = False
+winner = None
 
 # Initialize ball size and active status for second ball
 ball_size = [10, 10]
@@ -27,6 +30,7 @@ game_state_lock = threading.Lock()
 # Function to handle client connections
 def handle_client(conn, player_id):
     global player_positions
+    global player_heights
     global ball_position
     global ball_speed
     global player_scores
@@ -35,9 +39,11 @@ def handle_client(conn, player_id):
     global ball2_active
     global ball2_position
     global ball2_speed
+    global game_over
+    global winner
     
     try:
-        initial_data = pickle.dumps((player_id, ball_position, player_positions, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed))
+        initial_data = pickle.dumps((player_id, ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner))
         conn.send(initial_data)
         print(f"Sent initial data to player {player_id}: {initial_data}")
     except Exception as e:
@@ -53,6 +59,10 @@ def handle_client(conn, player_id):
             player_positions[player_id] = data['position']
             
             with game_state_lock:
+                if game_over:
+                    conn.sendall(pickle.dumps((ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner)))
+                    break
+
                 # Update ball position only on the server side
                 ball_position[0] += ball_speed[0]
                 ball_position[1] += ball_speed[1]
@@ -82,15 +92,15 @@ def handle_client(conn, player_id):
                         ball2_active = False
 
                 # Handle ball and paddle collisions
-                if ball_position[0] <= 35 and player_positions[0] < ball_position[1] < player_positions[0] + 50:
+                if ball_position[0] <= 35 and player_positions[0] < ball_position[1] < player_positions[0] + player_heights[0]:
                     ball_speed[0] = -ball_speed[0]
-                if ball_position[0] >= 635 and player_positions[1] < ball_position[1] < player_positions[1] + 50:
+                if ball_position[0] >= 635 and player_positions[1] < ball_position[1] < player_positions[1] + player_heights[1]:
                     ball_speed[0] = -ball_speed[0]
 
                 if ball2_active:
-                    if ball2_position[0] <= 35 and player_positions[0] < ball2_position[1] < player_positions[0] + 50:
+                    if ball2_position[0] <= 35 and player_positions[0] < ball2_position[1] < player_positions[0] + player_heights[0]:
                         ball2_speed[0] = -ball2_speed[0]
-                    if ball2_position[0] >= 635 and player_positions[1] < ball2_position[1] < player_positions[1] + 50:
+                    if ball2_position[0] >= 635 and player_positions[1] < ball2_position[1] < player_positions[1] + player_heights[1]:
                         ball2_speed[0] = -ball2_speed[0]
 
                 # Handle item collisions
@@ -108,14 +118,14 @@ def handle_client(conn, player_id):
                             ball_speed[1] = -ball_speed[1]
                         elif i == 3:
                             if ball_speed[0] > 0:
-                                player_positions[1] = min(player_positions[1] + 25, 350)
+                                player_heights[1] = min(player_heights[1] * 1.5, 150)
                             else:
-                                player_positions[0] = min(player_positions[0] + 25, 350)
+                                player_heights[0] = min(player_heights[0] * 1.5, 150)
                         elif i == 4:
                             if ball_speed[0] > 0:
-                                player_positions[0] = max(player_positions[0] - 25, 50)
+                                player_heights[0] = max(player_heights[0] * 0.75, 25)
                             else:
-                                player_positions[1] = max(player_positions[1] - 25, 50)
+                                player_heights[1] = max(player_heights[1] * 0.75, 25)
                         elif i == 5:
                             ball_size[0] = min(ball_size[0] * 1.5, 30)
                             ball_size[1] = min(ball_size[1] * 1.5, 30)
@@ -130,7 +140,15 @@ def handle_client(conn, player_id):
                         # Move the item to a new random position
                         item_positions[i] = [random.randint(0, 650), random.randint(0, 370)]
 
-            game_state = (ball_position, player_positions, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed)
+                # Check for game over
+                if player_scores[0] >= 10:
+                    game_over = True
+                    winner = 0
+                elif player_scores[1] >= 10:
+                    game_over = True
+                    winner = 1
+
+            game_state = (ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner)
             conn.sendall(pickle.dumps(game_state))
         except Exception as e:
             print(f"Error during game loop for player {player_id}: {e}")
