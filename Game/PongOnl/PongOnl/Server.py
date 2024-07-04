@@ -3,10 +3,22 @@ import threading
 import pickle
 import random
 import pygame
+import mysql.connector
+from datetime import datetime
+import pytz
+import uuid
 
 # Server settings
 HOST = 'localhost'  # Or your server IP address
 PORT = 5555
+
+# MySQL settings
+db_config = {
+    'user': 'root',
+    'password': '07042004',
+    'host': 'localhost',
+    'database': 'pong',
+}
 
 # Game state
 player_positions = [150, 150]  # Initial positions for two players
@@ -27,8 +39,25 @@ ball2_speed = [0, 0]
 # Lock for synchronizing access to game state
 game_state_lock = threading.Lock()
 
+# Function to save match data to MySQL
+def save_match_to_db(player1_id, player2_id, score1, score2, match_time, winner_name):
+    try:
+        cnx = mysql.connector.connect(**db_config)
+        cursor = cnx.cursor()
+        add_match = ("INSERT INTO matches (ID_trận, ID_user1, ID_user2, Điểm_user1, Điểm_user2, Thời_gian, Người_thắng) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+        match_id = str(uuid.uuid4())
+        match_data = (match_id, player1_id, player2_id, score1, score2, match_time, winner_name)
+        cursor.execute(add_match, match_data)
+        cnx.commit()
+        cursor.close()
+        cnx.close()
+        print("Match data saved to database.")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
 # Function to handle client connections
-def handle_client(conn, player_id):
+def handle_client(conn, player_id, player1_id, player2_id):
     global player_positions
     global player_heights
     global ball_position
@@ -41,23 +70,26 @@ def handle_client(conn, player_id):
     global ball2_speed
     global game_over
     global winner
-    
+
     try:
         initial_data = pickle.dumps((player_id, ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner))
         conn.send(initial_data)
-        print(f"Sent initial data to player {player_id}: {initial_data}")
+        print(f"Sent initial data to player {player_id}")
     except Exception as e:
         print(f"Error sending initial data to player {player_id}: {e}")
         conn.close()
         return
-    
+
+    vn_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+    match_start_time = datetime.now(vn_tz)
+
     while True:
         try:
             data = pickle.loads(conn.recv(1024))
             if not data:
                 break
             player_positions[player_id] = data['position']
-            
+
             with game_state_lock:
                 if game_over:
                     conn.sendall(pickle.dumps((ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner)))
@@ -66,7 +98,7 @@ def handle_client(conn, player_id):
                 # Update ball position only on the server side
                 ball_position[0] += ball_speed[0]
                 ball_position[1] += ball_speed[1]
-                
+
                 if ball2_active:
                     ball2_position[0] += ball2_speed[0]
                     ball2_position[1] += ball2_speed[1]
@@ -144,34 +176,65 @@ def handle_client(conn, player_id):
                 if player_scores[0] >= 10:
                     game_over = True
                     winner = 0
+                    winner_name = get_username(player1_id)  # Get username from database
                 elif player_scores[1] >= 10:
                     game_over = True
                     winner = 1
+                    winner_name = get_username(player2_id)  # Get username from database
+                else:
+                    winner_name = "Tie"
+
+                if game_over:
+                    match_end_time = datetime.now(vn_tz)
+                    match_duration = (match_end_time - match_start_time).total_seconds()
+                    match_duration_str = str(datetime.fromtimestamp(match_duration, vn_tz).strftime('%H:%M:%S'))
+                    save_match_to_db(player1_id, player2_id, player_scores[0], player_scores[1], match_duration_str, winner_name)
 
             game_state = (ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner)
             conn.sendall(pickle.dumps(game_state))
         except Exception as e:
             print(f"Error during game loop for player {player_id}: {e}")
             break
-    
+
     conn.close()
+
+# Function to get username from database
+def get_username(user_id):
+    try:
+        cnx = mysql.connector.connect(**db_config)
+        cursor = cnx.cursor()
+        query = ("SELECT Tên_người_dùng FROM users WHERE ID_user = %s")
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        cnx.close()
+        if result:
+            return result[0]
+        else:
+            return "Unknown"
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return "Unknown"
 
 # Main server function
 def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen(2)  # We expect two players
-    
+
     print("Server started. Waiting for connections...")
-    
+
+    player1_id = 1  # Fetch or assign player 1 ID from your users table
+    player2_id = 2  # Fetch or assign player 2 ID from your users table
+
     player_id = 0
     while player_id < 2:
         conn, addr = server.accept()
         print(f"Player {player_id} connected from {addr}")
-        thread = threading.Thread(target=handle_client, args=(conn, player_id))
+        thread = threading.Thread(target=handle_client, args=(conn, player_id, player1_id, player2_id))
         thread.start()
         player_id += 1
-    
+
     server.close()
 
 if __name__ == "__main__":
