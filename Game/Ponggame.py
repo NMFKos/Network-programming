@@ -1,5 +1,15 @@
 import pygame, sys, random
 
+# Define the scale_image function here
+# def scale_image(image, width, height):
+#     image_ratio = image.get_width() / image.get_height()
+#     screen_ratio = width / height
+#     if screen_ratio < image_ratio:
+#         scale = width / image.get_width()
+#     else:
+#         scale = height / image.get_height()
+#     return pygame.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))
+
 screen_width = 1280
 screen_height = 800
 
@@ -96,6 +106,20 @@ def animate_ball():
         ball.height *= 0.75
         item8.x = random.randint(0, screen_width)
         item8.y = random.randint(0, screen_height)
+    if ball.colliderect(item9):
+        game_over = True
+        if player1_points > player2_points:
+            win_surface = score_font.render("You win!", True, "white")
+        elif player2_points > player1_points:
+            win_surface = score_font.render("You win!", True, "white")
+        else:
+            win_surface = score_font.render("Its a tie!", True, "white")
+        screen.blit(win_surface, (screen_width/2, screen_height/2))
+        pygame.display.update()
+        pygame.time.wait(6000)
+        pygame.quit()
+        sys.exit()
+
     if ball.bottom >= screen_height or ball.top <= 0:
         ball_speed_y *= -1
     if ball.right >= screen_width:
@@ -221,7 +245,6 @@ item9_image = pygame.transform.scale(item9_image, (30, 30)).convert_alpha()
 
 # Create the nineth item
 item9 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
-item9_active = False
 
 #Load and play backkground music:
 pygame.mixer.music.load('sounds/background_music.mp3')
@@ -233,8 +256,9 @@ ball2_active = False
 ball2_speed_x = 6
 ball2_speed_y = 6
 
-start_time = pygame.time.get_ticks()  # Initialize start time
-game_over = False  # Initialize game_over before the loop
+start_time = pygame.time.get_ticks()
+game_over = False
+item9_active = False
 
 while not game_over:
     # Check for events
@@ -287,18 +311,16 @@ while not game_over:
     # Check for collision with item9
     if ball.colliderect(item9_rect) and item9_active:
         game_over = True
-        # Determine the winner or if it's a tie
         if player1_points > player2_points:
             win_surface = score_font.render("You Win!", True, "white")
         elif player2_points > player1_points:
             win_surface = score_font.render("You Win!", True, "white")
         else:
             win_surface = score_font.render("It's a tie!", True, "white")
-        # Display the result
         screen.blit(win_surface, (screen_width/2 - win_surface.get_width()/2, screen_height/2))
         pygame.display.update()
-        pygame.time.wait(6000)  # Wait a few seconds to display the result
-        break  # Exit the game loop
+        pygame.time.wait(6000)
+        break
 
     if game_over:
         break
@@ -318,12 +340,12 @@ while not game_over:
     screen.blit(player2_score_surface,(screen_width/4,20))
     screen.blit(player1_score_surface,(3*screen_width/4,20))
 
-    # Display countdown timer
-    remaining_time = 60 - (current_time - start_time) / 1000  # Convert milliseconds to seconds
-    time_text = f"{int(remaining_time)}"  # Display only whole seconds
-    time_surface = score_font.render(time_text, True, (255, 255, 255))  # Assuming 'score_font' is defined, change color if needed
+
+    remaining_time = 60 - (current_time - start_time) / 1000
+    time_text = f"{int(remaining_time)}"
+    time_surface = score_font.render(time_text, True, (255, 255, 255))
     time_x = screen_width / 2 - time_surface.get_width() / 2
-    time_y = 20  # 20 pixels from the top, adjust as needed
+    time_y = 20
     screen.blit(time_surface, (time_x, time_y))
 
     #Draw the game objects
