@@ -15,19 +15,35 @@ def fetch_matches(user_id):
     try:
         cnx = mysql.connector.connect(**db_config)
         cursor = cnx.cursor()
-        query = ("SELECT ID_trận, ID_user1, ID_user2, Điểm_user1, Điểm_user2, Thời_gian "
-                 "FROM matches "
-                 "WHERE ID_user1 = %s OR ID_user2 = %s")
-        cursor.execute(query, (user_id, user_id))
+        query = ("""
+            SELECT m.ID_trận, 
+                   CASE 
+                     WHEN m.ID_user1 = %s THEN m.ID_user2 
+                     ELSE m.ID_user1 
+                   END AS ID_đối_thủ,
+                   CASE 
+                     WHEN m.ID_user1 = %s THEN u2.Tên_người_dùng 
+                     ELSE u1.Tên_người_dùng 
+                   END AS Tên_đối_thủ,
+                   CASE 
+                     WHEN m.ID_user1 = %s THEN m.Điểm_user1 
+                     ELSE m.Điểm_user2 
+                   END AS Điểm_của_bạn,
+                   CASE 
+                     WHEN m.ID_user1 = %s THEN m.Điểm_user2 
+                     ELSE m.Điểm_user1 
+                   END AS Điểm_đối_thủ,
+                   m.Thời_gian
+            FROM matches m
+            JOIN users u1 ON m.ID_user1 = u1.ID_user
+            JOIN users u2 ON m.ID_user2 = u2.ID_user
+            WHERE m.ID_user1 = %s OR m.ID_user2 = %s
+        """)
+        cursor.execute(query, (user_id, user_id, user_id, user_id, user_id, user_id))
         
-        for (ID_trận, ID_user1, ID_user2, Điểm_user1, Điểm_user2, Thời_gian) in cursor:
-            if ID_user1 == user_id:
-                opponent_id = ID_user2
-                result = "Thắng" if Điểm_user1 > Điểm_user2 else "Thua" if Điểm_user1 < Điểm_user2 else "Hòa"
-            else:
-                opponent_id = ID_user1
-                result = "Thắng" if Điểm_user2 > Điểm_user1 else "Thua" if Điểm_user2 < Điểm_user1 else "Hòa"
-            matches.append((opponent_id, result, Thời_gian))
+        for (ID_trận, ID_đối_thủ, Tên_đối_thủ, Điểm_của_bạn, Điểm_đối_thủ, Thời_gian) in cursor:
+            result = "Thắng" if Điểm_của_bạn > Điểm_đối_thủ else "Thua" if Điểm_của_bạn < Điểm_đối_thủ else "Hòa"
+            matches.append((ID_đối_thủ, Tên_đối_thủ, result, Thời_gian))
         
         cursor.close()
         cnx.close()
@@ -47,8 +63,9 @@ root.title("Lịch sử đấu của trò chơi")
 back_button = ttk.Button(root, text="Quay lại")
 back_button.pack(side=tk.TOP, pady=10)  # Đặt nút ở phía trên cùng và thêm khoảng cách dưới nút
 
-tree = ttk.Treeview(root, columns=("Kết quả", "Ngày"))
+tree = ttk.Treeview(root, columns=("Tên đối thủ", "Kết quả", "Ngày"))
 tree.heading("#0", text="ID đối thủ")
+tree.heading("Tên đối thủ", text="Tên đối thủ")
 tree.heading("Kết quả", text="Kết quả")
 tree.heading("Ngày", text="Thời gian")
 
