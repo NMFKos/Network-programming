@@ -192,7 +192,7 @@ player2_points, player1_points = 0, 0
 score_font = pygame.font.Font(None, 100)
 
 #Load background
-background_image = pygame.image.load('Game/img/background1.jpg').convert()
+background_image = pygame.image.load('./img/background1.jpg').convert()
 background_image = pygame.transform.scale(background_image, (screen_width, screen_height))
 
 # Load the bar image
@@ -206,21 +206,21 @@ background_image = pygame.transform.scale(background_image, (screen_width, scree
 
 
 # Load the item image
-item_image = pygame.image.load('Game/img/tangtoc.jpg')
+item_image = pygame.image.load('./img/tangtoc.jpg')
 item_image = pygame.transform.scale(item_image, (30, 30)).convert_alpha()
 
 # Create the item
 item = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the second item image
-item2_image = pygame.image.load('Game/img/giamtoc.jpg')
+item2_image = pygame.image.load('./img/giamtoc.jpg')
 item2_image = pygame.transform.scale(item2_image, (30, 30)).convert_alpha()
 
 # Create the second item
 item2 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the third item image
-item3_image = pygame.image.load('Game/img/doihuong.png')
+item3_image = pygame.image.load('./img/doihuong.png')
 item3_image = pygame.transform.scale(item3_image, (30, 30)).convert_alpha()
 
 # Create the third item
@@ -234,42 +234,42 @@ item3 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_he
 # item4 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the fifth item image
-item5_image = pygame.image.load('Game/img/x2diem.png')
+item5_image = pygame.image.load('./img/x2diem.png')
 item5_image = pygame.transform.scale(item5_image, (30, 30)).convert_alpha()
 
 # Create the fifth item
 item5 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the sixth item image
-item6_image = pygame.image.load('Game/img/smallerbar.png')
+item6_image = pygame.image.load('./img/smallerbar.png')
 item6_image = pygame.transform.scale(item6_image, (30, 30)).convert_alpha()
 
 # Create the sixth item
 item6 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the seventh item image
-item7_image = pygame.image.load('Game/img/bigball.png')
+item7_image = pygame.image.load('./img/bigball.png')
 item7_image = pygame.transform.scale(item7_image, (30, 30)).convert_alpha()
 
 # Create the seventh item
 item7 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the eighth item image
-item8_image = pygame.image.load('Game/img/smallball.png')
+item8_image = pygame.image.load('./img/smallball.png')
 item8_image = pygame.transform.scale(item8_image, (30, 30)).convert_alpha()
 
 # Create the eighth item
 item8 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 # Load the nineth item image
-item9_image = pygame.image.load('Game/img/plusball.png')
+item9_image = pygame.image.load('./img/plusball.png')
 item9_image = pygame.transform.scale(item9_image, (30, 30)).convert_alpha()
 
 # Create the nineth item
 item9 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
 #Load and play backkground music:
-pygame.mixer.music.load('Game/sounds/background_music.mp3')
+pygame.mixer.music.load('./sounds/background_music.mp3')
 pygame.mixer.music.play(-1)  # The -1 makes the music loop indefinitely
 
 # Define ball2 and ball2_active before the game loop
