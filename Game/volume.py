@@ -61,7 +61,7 @@ def modify_volume(main_app):
     main_app.withdraw()
 
     # Background image setup
-    bg_img = CTkImage(Image.open("./Volume/Volume/Volume/bgvolume.jpg"), size=(850, 500))
+    bg_img = CTkImage(Image.open("./Volume/bgvolume.jpg"), size=(850, 500))
     bg_lab = CTkLabel(volume_window, image=bg_img)
     bg_lab.place(x=0, y=0, relwidth=1, relheight=1)
 

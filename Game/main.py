@@ -45,7 +45,7 @@ def home(id_user, app):
     def play_sound():
         modify_volume(home_window)
     def notification():
-        subprocess.run(["python3", "./Notification/Notification/Notification/notification.py"])
+        subprocess.run(["python", "./Notification/notification.py"])
 
     def profile(id_user,window):
         

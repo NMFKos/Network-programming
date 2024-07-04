@@ -7,7 +7,7 @@ def show_invitation_notification(title, message):
     root.resizable(False, False)  # Khóa cửa sổ lại để ngăn người dùng thay đổi kích thước
 
     # Tạo và hiển thị hình ảnh nền
-    background_image = CTkImage(dark_image=Image.open("./Notification/Notification/Notification/notification.png"), size=(850, 500))
+    background_image = CTkImage(dark_image=Image.open("./Notification/notification.png"), size=(850, 500))
     background_label = CTkLabel(root, image=background_image, text="")
     background_label.place(x=0, y=0, relwidth=1, relheight=1)  # Đặt hình ảnh nền để lấp đầy toàn bộ cửa sổ
 
