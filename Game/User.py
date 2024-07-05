@@ -1,6 +1,7 @@
 from pathlib import Path
 import mysql.connector
 from FindUser import Find
+from FriendList import friend_list
 from tkinter import filedialog
 # Explicit imports to satisfy Flake8
 import customtkinter as ctk
@@ -79,8 +80,6 @@ def profile_info(id, main_app):
     change_image_button = ctk.CTkButton(window, text="Change Image", command=lambda:change_image(ava_lab, id),width=120, height=20)
     change_image_button.place(x=112, y=270)
     
-
-
     # Info
     info_bg = CTkImage(dark_image=Image.open("./assets/image_2.png"), size=(400, 185))
     info_bg_lab = CTkLabel(window, image=info_bg, text="ID: " + "\t" + str(id_user[0]) + "\n\nUsername: " + str(name[0]) + "\n\nEmail:" + "\t" + str(email[0]),
@@ -103,7 +102,7 @@ def profile_info(id, main_app):
     # friend button
     friend_btn = CTkButton(window, text='Danh sách bạn bè', width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
-                        bg_color='transparent', corner_radius=10)
+                        bg_color='transparent', corner_radius=10, command=lambda:friend_list(window, id))
     friend_btn.place(x=370, y=350)
 
     find_user_btn = CTkButton(window, text='Tìm bạn bè',command=lambda:Find(window,id), width=120, height=50,
