@@ -16,17 +16,21 @@ def go_back(window, main_app):
     window.withdraw()
     main_app.deiconify()
 
-def add_fr(id1, id2):
-    connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
-    cursor = connection.cursor()
-    
+def add_fr(id1, id2, connection, cursor): 
     try:
         cursor.execute("INSERT INTO FRIENDS (id_user1, id_user2) VALUES (%s, %s)", [id1, id2[0]])
         connection.commit()
         print("Successfully added friend")
     except:
         print("Failed to add friend")
-    
+def delete_fr(id1, id2, connection, cursor):
+    try:
+        cursor.execute("DELETE FROM FRIENDS WHERE (id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)", [id1, id2[0], id2[0], id1])
+        connection.commit()
+        print("Successfully deleted friend")
+    except:
+        print("Failed to delete friend")
+        
 def Result(rows, main_app, id1):
     
     id2 = [row[0] for row in rows]
@@ -38,6 +42,11 @@ def Result(rows, main_app, id1):
     window.geometry("850x500")
     window.configure(bg = "#2B5955")
     main_app.withdraw()
+    
+    # Connect to the database
+    connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
+    cursor = connection.cursor()
+    
     # Create the main window
     bg_img = CTkImage(dark_image=Image.open("./assets/image_1.png"), size=(850, 500))
     bg_lab = CTkLabel(window, image=bg_img, text="")
@@ -64,12 +73,22 @@ def Result(rows, main_app, id1):
                         fg_color='#407777', hover_color='#FF7B81',
                         bg_color='transparent', corner_radius=10)
     back_btn.place(x=10, y=20)
-
-    # friend button
-    friend_btn = CTkButton(window, text='Thêm bạn bè', width=120, height=50,
+    
+    cursor.execute("SELECT * FROM FRIENDS WHERE (id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)", [id1, id2[0], id2[0], id1])
+    result = cursor.fetchall()
+    print(result)
+    if result:
+        # Delete friend button
+        delete_fr_btn = CTkButton(window, text='Xóa kết bạn', width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
-                        bg_color='transparent', corner_radius=10, command=lambda:add_fr(id1, id2))
-    friend_btn.place(x=370, y=350)
+                        bg_color='transparent', corner_radius=10, command=lambda:delete_fr(id1, id2, connection, cursor))
+        delete_fr_btn.place(x=370, y=350)
+    else:
+        # Add friend button
+        friend_btn = CTkButton(window, text='Thêm bạn bè', width=120, height=50,
+                        fg_color='#407777', hover_color='#FF7B81',
+                        bg_color='transparent', corner_radius=10, command=lambda:add_fr(id1, id2, connection, cursor))
+        friend_btn.place(x=370, y=350)
 
     window.resizable(False, False)
     window.mainloop()
