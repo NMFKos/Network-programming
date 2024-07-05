@@ -1,8 +1,8 @@
+import mysql.connector
 import tkinter as tk
 from tkinter import ttk
-import mysql.connector
+from PIL import Image, ImageTk
 
-# MySQL settings
 db_config = {
     'user': 'root',
     'password': '07042004',
@@ -51,31 +51,65 @@ def fetch_matches(user_id):
         print(f"Error: {err}")
     return matches
 
+
+def create_gui(root, fetch_matches, user_id):
+    root.title("Lịch sử đấu của trò chơi")
+    root.geometry("800x600")
+    root.resizable(False, False)
+
+    # Nạp ảnh nền
+    bg_image = Image.open("img/htsbg.jpg")
+    bg_photo = ImageTk.PhotoImage(bg_image)
+
+    # Tạo canvas và thêm ảnh nền
+    canvas = tk.Canvas(root, width=800, height=600)
+    canvas.pack(fill="both", expand=True)
+    canvas.image = bg_photo  # Giữ tham chiếu đến ảnh để tránh bị garbage collected
+    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+
+    # Tạo frame và đặt vào canvas
+    frame = ttk.Frame(canvas)
+    frame.pack(pady=20)
+    canvas.create_window(400, 300, window=frame)
+
+    # Nút quay lại
+    back_button = ttk.Button(canvas, text="Quay lại")
+    canvas.create_window(400, 20, window=back_button)
+
+    # Cấu hình Treeview
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", background="#D3D3D3", foreground="black", rowheight=40, fieldbackground="#D3D3D3")
+    style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))
+    style.map("Treeview", background=[('selected', '#347083')])
+
+    tree = ttk.Treeview(frame, columns=("Tên đối thủ", "Kết quả", "Ngày"), show="headings")
+    tree.heading("Tên đối thủ", text="Tên đối thủ")
+    tree.heading("Kết quả", text="Kết quả")
+    tree.heading("Ngày", text="Thời gian")
+    tree.column("Tên đối thủ", anchor=tk.CENTER, width=250)
+    tree.column("Kết quả", anchor=tk.CENTER, width=150)
+    tree.column("Ngày", anchor=tk.CENTER, width=200)
+
+    # Thêm scrollbar vào Treeview
+    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    tree.pack(expand=True, fill=tk.BOTH)
+
+    # Lấy dữ liệu từ cơ sở dữ liệu và điền vào Treeview
+    matches = fetch_matches(user_id)
+    populate_tree(tree, matches)
+
 def populate_tree(tree, matches):
     for match in matches:
         tree.insert("", "end", text=match[0], values=match[1:])
 
-# Main application
-root = tk.Tk()
-root.title("Lịch sử đấu của trò chơi")
+def main():
+    root = tk.Tk()
+    current_user_id = 1  # Replace with the actual user ID
+    create_gui(root, fetch_matches, current_user_id)
+    root.mainloop()
 
-# Tạo nút "Quay lại" ở phía trên cùng
-back_button = ttk.Button(root, text="Quay lại")
-back_button.pack(side=tk.TOP, pady=10)  # Đặt nút ở phía trên cùng và thêm khoảng cách dưới nút
-
-tree = ttk.Treeview(root, columns=("Tên đối thủ", "Kết quả", "Ngày"))
-tree.heading("#0", text="ID đối thủ")
-tree.heading("Tên đối thủ", text="Tên đối thủ")
-tree.heading("Kết quả", text="Kết quả")
-tree.heading("Ngày", text="Thời gian")
-
-# Lấy ID user hiện tại
-current_user_id = 1  # Thay thế bằng ID thực của user hiện tại
-
-# Lấy dữ liệu từ cơ sở dữ liệu và điền vào Treeview
-matches = fetch_matches(current_user_id)
-populate_tree(tree, matches)
-
-tree.pack(expand=True, fill=tk.BOTH)
-
-root.mainloop()
+if __name__ == "__main__":
+    main()
