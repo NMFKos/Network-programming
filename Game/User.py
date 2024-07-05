@@ -41,9 +41,9 @@ def go_back(window, main_app, id):
     save_image_change(id)
     window.withdraw()
     main_app.deiconify()
-def find_user(window):
+def find_user(window, id):
     window.withdraw()
-    Find(window)
+    Find(window, id)
 def profile_info(id, main_app):
     window = CTkToplevel(main_app)
     window.title("Profile")

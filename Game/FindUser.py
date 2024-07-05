@@ -59,5 +59,5 @@ def Find(main_app, id1):
     window.mainloop()
 if __name__ == "__main__":
     root = CTk()
-    Find(root, id1)
+    Find(root, id)
     root.mainloop()

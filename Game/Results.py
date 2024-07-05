@@ -2,16 +2,16 @@ from pathlib import Path
 import mysql.connector
 from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkToplevel
 from PIL import Image    
-
 import os
-
 from dotenv import load_dotenv, dotenv_values
+
 load_dotenv()
 config = dotenv_values(".env")
 HOST = os.getenv("HOST")
 USER = os.getenv("USER")
 DATABASE = os.getenv("DATABASE")
 PASSWORD = os.getenv("PASSWORD")
+
 def go_back(window, main_app):
     window.withdraw()
     main_app.deiconify()
@@ -19,18 +19,15 @@ def go_back(window, main_app):
 def add_fr(id1, id2):
     connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
     cursor = connection.cursor()
-    print(type(id1), type(id2))
-    for i in id2:
-        print(i)
-    print(id1)
+    
     try:
         cursor.execute("INSERT INTO FRIENDS (id_user1, id_user2) VALUES (%s, %s)", [id1, id2[0]])
+        connection.commit()
         print("Successfully added friend")
     except:
         print("Failed to add friend")
     
 def Result(rows, main_app, id1):
-    
     
     id2 = [row[0] for row in rows]
     username = [row[1] for row in rows]
@@ -67,8 +64,6 @@ def Result(rows, main_app, id1):
                         fg_color='#407777', hover_color='#FF7B81',
                         bg_color='transparent', corner_radius=10)
     back_btn.place(x=10, y=20)
-
-    
 
     # friend button
     friend_btn = CTkButton(window, text='Thêm bạn bè', width=120, height=50,
