@@ -23,9 +23,7 @@ player2 = pygame.Rect(screen_width - 50, screen_height // 2, 10, original_bar_he
 original_ball_size = 20
 ball = pygame.Rect(screen_width // 2 - 10, screen_height // 2 - 10, original_ball_size, original_ball_size)
 
-
 item4_hit = False
-
 def reset_ball():
     global ball_speed_x, ball_speed_y
     ball.x = screen_width/2 - 10
@@ -36,7 +34,7 @@ def reset_ball():
     ball_speed_y *= random.choice([-1,1])
 
 def point_won(winner):
-    global ball_speed_x, ball_speed_y, player2_points, player1_points, item4_hit
+    global ball_speed_x, ball_speed_y, player2_points, player1_points, item4_hit, ball2_active
     if winner == "player2":
         player2_points += 2 if item4_hit else 1
         item4_hit = False
@@ -55,11 +53,15 @@ def point_won(winner):
     
     reset_ball()
 
+    # Reset ball2 if it was active
+    if ball2_active:
+        ball2_active = False
+
 def animate_ball():
-    global ball_speed_x, ball_speed_y
-    global player1_points, player2_points
+    global ball_speed_x, ball_speed_y, ball2_speed_x, ball2_speed_y, ball2_active, player1_points, player2_points
     ball.x += ball_speed_x
     ball.y += ball_speed_y
+    
     if ball.colliderect(item):
         ball_speed_x *= 1.2
         ball_speed_y *= 1.2
@@ -119,6 +121,17 @@ def animate_ball():
         pygame.time.wait(6000)
         pygame.quit()
         sys.exit()
+    if ball.colliderect(item10):
+        # Create a second ball
+        ball2.x = random.randint(0, screen_width)
+        ball2.y = random.randint(0, screen_height)
+        ball2_speed_x = 6
+        ball2_speed_y = 6
+        ball2_speed_x *= random.choice([-1, 1])
+        ball2_speed_y *= random.choice([-1, 1])
+        ball2_active = True
+        item10.x = random.randint(0, screen_width)
+        item10.y = random.randint(0, screen_height)
 
     if ball.bottom >= screen_height or ball.top <= 0:
         ball_speed_y *= -1
@@ -128,7 +141,85 @@ def animate_ball():
         point_won("player1")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     if ball.colliderect(player1) or ball.colliderect(player2):
         ball_speed_x *= -1
+
+    if ball2_active:
+        ball2.x += ball2_speed_x
+        ball2.y += ball2_speed_y
         
+        if ball2.colliderect(item):
+            ball2_speed_x *= 1.2
+            ball2_speed_y *= 1.2
+            item.x = random.randint(0, screen_width)
+            item.y = random.randint(0, screen_height)
+        if ball2.colliderect(item2):
+            ball2_speed_x *= 0.8
+            ball2_speed_y *= 0.8
+            item2.x = random.randint(0, screen_width)
+            item2.y = random.randint(0, screen_height)
+        if ball2.colliderect(item3):
+            ball2_speed_y *= -1
+            item3.x = random.randint(0, screen_width)
+            item3.y = random.randint(0, screen_height)
+        if ball2.colliderect(item4):
+            item4_hit = True
+            item4.x = random.randint(0, screen_width)
+            item4.y = random.randint(0, screen_height)
+        if ball2.colliderect(item5):
+            if ball2_speed_x > 0:
+                player2.height *= 1.5
+            else:
+                player1.height *= 1.5
+            item5.x = random.randint(0, screen_width)
+            item5.y = random.randint(0, screen_height)
+        if ball2.colliderect(item6):
+            if ball2_speed_x > 0:
+                player1.height *= 0.75
+            else:
+                player2.height *= 0.75
+            item6.x = random.randint(0, screen_width)
+            item6.y = random.randint(0, screen_height)
+        if ball2.colliderect(item7):
+            ball2.width *= 1.5
+            ball2.height *= 1.5
+            item7.x = random.randint(0, screen_width)
+            item7.y = random.randint(0, screen_height)
+        if ball2.colliderect(item8):
+            ball2.width *= 0.75
+            ball2.height *= 0.75
+            item8.x = random.randint(0, screen_width)
+            item8.y = random.randint(0, screen_height)
+        if ball2.colliderect(item9):
+            game_over = True
+            if player1_points > player2_points:
+                win_surface = score_font.render("You win!", True, "white")
+            elif player2_points > player1_points:
+                win_surface = score_font.render("You win!", True, "white")
+            else:
+                win_surface = score_font.render("Its a tie!", True, "white")
+            screen.blit(win_surface, (screen_width/2, screen_height/2))
+            pygame.display.update()
+            pygame.time.wait(6000)
+            pygame.quit()
+            sys.exit()
+        if ball2.colliderect(item10):
+            ball2.x = random.randint(0, screen_width)
+            ball2.y = random.randint(0, screen_height)
+            ball2_speed_x = 6
+            ball2_speed_y = 6
+            ball2_speed_x *= random.choice([-1, 1])
+            ball2_speed_y *= random.choice([-1, 1])
+            item10.x = random.randint(0, screen_width)
+            item10.y = random.randint(0, screen_height)
+
+        if ball2.bottom >= screen_height or ball2.top <= 0:
+            ball2_speed_y *= -1
+        if ball2.right >= screen_width:
+            point_won("player2")
+        if ball2.left <= 0:
+            point_won("player1")
+        if ball2.colliderect(player1) or ball2.colliderect(player2):
+            ball2_speed_x *= -1
+
 def animate_player():
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP]:
@@ -246,6 +337,14 @@ item9_image = pygame.transform.scale(item9_image, (30, 30)).convert_alpha()
 # Create the nineth item
 item9 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
 
+# Load the tenth item image
+item10_image = pygame.image.load('img/plusball.png')
+item10_image = pygame.transform.scale(item10_image, (30, 30)).convert_alpha()
+
+# Create the tenth item
+item10 = pygame.Rect(random.randint(0, screen_width), random.randint(0, screen_height), 30, 30)
+
+
 #Load and play backkground music:
 pygame.mixer.music.load('sounds/background_music.mp3')
 pygame.mixer.music.play(-1)  # The -1 makes the music loop indefinitely
@@ -353,7 +452,7 @@ while not game_over:
     pygame.draw.ellipse(screen,'white',ball)
     # Draw ball2
     if ball2_active:
-        pygame.draw.ellipse(screen, 'black', ball2)
+        pygame.draw.ellipse(screen, 'white', ball2)
     pygame.draw.rect(screen,'white',player2)
     pygame.draw.rect(screen,'white',player1)
 
@@ -383,6 +482,9 @@ while not game_over:
 
     # Draw the nineth item
     screen.blit(item9_image, item9)
+
+    # Draw the tenth item
+    screen.blit(item10_image, item10)
 
     # Update the display
     pygame.display.flip()
