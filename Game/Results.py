@@ -1,6 +1,7 @@
 from pathlib import Path
 import mysql.connector
 from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkToplevel
+from tkinter import messagebox
 from PIL import Image    
 import os
 from dotenv import load_dotenv, dotenv_values
@@ -21,6 +22,7 @@ def add_fr(id1, id2, connection, cursor):
         cursor.execute("INSERT INTO FRIENDS (id_user1, id_user2) VALUES (%s, %s)", [id1, id2[0]])
         connection.commit()
         print("Successfully added friend")
+        messagebox.showinfo("Thông báo", "Đã gửi lời mời kết bạn")
     except:
         print("Failed to add friend")
 def delete_fr(id1, id2, connection, cursor):
@@ -28,6 +30,7 @@ def delete_fr(id1, id2, connection, cursor):
         cursor.execute("DELETE FROM FRIENDS WHERE (id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)", [id1, id2[0], id2[0], id1])
         connection.commit()
         print("Successfully deleted friend")
+        messagebox.showinfo("Thông báo", "Đã xóa bạn bè")
     except:
         print("Failed to delete friend")
         
@@ -74,7 +77,7 @@ def Result(rows, main_app, id1):
                         bg_color='transparent', corner_radius=10)
     back_btn.place(x=10, y=20)
     
-    cursor.execute("SELECT * FROM FRIENDS WHERE (id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)", [id1, id2[0], id2[0], id1])
+    cursor.execute("SELECT * FROM FRIENDS WHERE ((id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)) AND status = 'accepted'", [id1, id2[0], id2[0], id1])
     result = cursor.fetchall()
     print(result)
     if result:

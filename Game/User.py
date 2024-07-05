@@ -109,7 +109,7 @@ def profile_info(id, main_app):
     find_user_btn = CTkButton(window, text='Tìm bạn bè',command=lambda:Find(window,id), width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
                         bg_color='transparent', corner_radius=10)
-    find_user_btn.place(x=630, y=350)
+    find_user_btn.place(x=570, y=350)
 
     window.resizable(False, False)
     window.mainloop()
