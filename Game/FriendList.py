@@ -1,4 +1,3 @@
-from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkFrame
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -15,11 +14,12 @@ PASSWORD = os.getenv("PASSWORD")
 
 # Connect to the database
 connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD, database=DATABASE)
+
 def go_back(window, main_app, id):
     window.withdraw()
     main_app.deiconify()
     
-def friend_list(main_app, id):
+def friend_list(id):
     # Create a new window
     window = tk.Tk()
     window.title("Danh sách bạn bè")
@@ -28,11 +28,11 @@ def friend_list(main_app, id):
     # Nạp ảnh nền
     bg_image = Image.open("./assets/image_1.png")
     bg_photo = ImageTk.PhotoImage(bg_image)
-
+    
+    window.bg_photo = bg_photo
     # Tạo canvas và thêm ảnh nền
     canvas = tk.Canvas(window, width=700, height=380)
     canvas.pack(fill="both", expand=True)
-    canvas.image = bg_photo
     canvas.create_image(0, 0, image=bg_photo, anchor="nw")
 
     # Tạo frame và đặt vào canvas
@@ -40,10 +40,9 @@ def friend_list(main_app, id):
     canvas.create_window(350, 190, window=frame, anchor="center")  # Center the frame
 
     # Back button
-    back_btn = CTkButton(window, text='Quay lại', command=lambda: go_back(window, main_app, id), width=120, height=30,
-                        fg_color='#407777', hover_color='#FF7B81',
-                        bg_color='transparent', corner_radius=10)
-    back_btn.place(x=10, y=20)
+    # back_btn = tk.Button(window, text='Quay lại', command=lambda: go_back(window, main_app, id), width=120, height=30,
+    #                     hover_color='#FF7B81', bg_color='transparent', corner_radius=10)
+    # back_btn.place(x=10, y=20)
 
     # Create a Treeview
     style = ttk.Style()
@@ -52,7 +51,7 @@ def friend_list(main_app, id):
     style.configure("Treeview.Heading", font=("Helvetica", 10, "bold"))
     style.map("Treeview", background=[('selected', '#347083')])
 
-    tree = ttk.Treeview(frame, columns=("Friend",), show="headings", height=6)  # Adjust the height here
+    tree = ttk.Treeview(frame, columns=("Friend",), show="headings", height=6)
     tree.heading("Friend", text="Bạn bè")
     tree.column("Friend", anchor=tk.CENTER, width=650)
 
@@ -76,9 +75,10 @@ def friend_list(main_app, id):
                 tree.insert("", tk.END, values=row)
         else:
             print("No friends found.")
-            
+
     except mysql.connector.Error as err:
         print(f"Error: {err}")
     
     window.resizable(False, False)
     window.mainloop()
+    

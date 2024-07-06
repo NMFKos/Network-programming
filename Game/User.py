@@ -100,6 +100,7 @@ def profile_info(id, main_app):
     history_btn.place(x=110, y=350)
 
     # friend button
+    
     friend_btn = CTkButton(window, text='Danh sách bạn bè', width=120, height=50,
                         fg_color='#407777', hover_color='#FF7B81',
                         bg_color='transparent', corner_radius=10, command=lambda:friend_list(window, id))
