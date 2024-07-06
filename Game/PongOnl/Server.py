@@ -26,7 +26,7 @@ player_heights = [50, 50]      # Initial heights for two players
 ball_position = [340, 200]     # Initial ball position
 ball_speed = [0.5, 0.5]
 player_scores = [0, 0]         # Player scores
-item_positions = [[random.randint(0, 650), random.randint(0, 370)] for _ in range(8)]
+item_positions = [[random.randint(0, 650), random.randint(0, 370)] for _ in range(9)]
 game_over = False
 winner = None
 
@@ -39,15 +39,26 @@ ball2_speed = [0, 0]
 # Lock for synchronizing access to game state
 game_state_lock = threading.Lock()
 
+# Function to reset game state
+def reset_game_state():
+    global ball_position, ball_speed, player_heights, ball_size, ball2_active, ball2_position, ball2_speed
+    ball_position = [340, 200]
+    ball_speed = [0.5, 0.5]
+    player_heights = [50, 50]
+    ball_size = [10, 10]
+    ball2_active = False
+    ball2_position = [0, 0]
+    ball2_speed = [0, 0]
+
 # Function to save match data to MySQL
-def save_match_to_db(player1_id, player2_id, score1, score2, match_time, winner_name):
+def save_match_to_db(player1_id, player2_id, score1, score2, match_date, winner_name):
     try:
         cnx = mysql.connector.connect(**db_config)
         cursor = cnx.cursor()
         add_match = ("INSERT INTO matches (ID_trận, ID_user1, ID_user2, Điểm_user1, Điểm_user2, Thời_gian, Người_thắng) "
                      "VALUES (%s, %s, %s, %s, %s, %s, %s)")
         match_id = str(uuid.uuid4())
-        match_data = (match_id, player1_id, player2_id, score1, score2, match_time, winner_name)
+        match_data = (match_id, player1_id, player2_id, score1, score2, match_date, winner_name)
         cursor.execute(add_match, match_data)
         cnx.commit()
         cursor.close()
@@ -58,18 +69,7 @@ def save_match_to_db(player1_id, player2_id, score1, score2, match_time, winner_
 
 # Function to handle client connections
 def handle_client(conn, player_id, player1_id, player2_id):
-    global player_positions
-    global player_heights
-    global ball_position
-    global ball_speed
-    global player_scores
-    global item_positions
-    global ball_size
-    global ball2_active
-    global ball2_position
-    global ball2_speed
-    global game_over
-    global winner
+    global player_positions, player_heights, ball_position, ball_speed, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner
 
     try:
         initial_data = pickle.dumps((player_id, ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner))
@@ -81,7 +81,7 @@ def handle_client(conn, player_id, player1_id, player2_id):
         return
 
     vn_tz = pytz.timezone('Asia/Ho_Chi_Minh')
-    match_start_time = datetime.now(vn_tz)
+    match_start_date = datetime.now(vn_tz).date()
 
     while True:
         try:
@@ -108,10 +108,10 @@ def handle_client(conn, player_id, player1_id, player2_id):
                     ball_speed[1] = -ball_speed[1]
                 if ball_position[0] <= 0:
                     player_scores[1] += 1
-                    ball_position = [340, 200]
+                    reset_game_state()
                 if ball_position[0] >= 670:
                     player_scores[0] += 1
-                    ball_position = [340, 200]
+                    reset_game_state()
 
                 if ball2_active:
                     if ball2_position[1] <= 0 or ball2_position[1] >= 390:
@@ -119,9 +119,11 @@ def handle_client(conn, player_id, player1_id, player2_id):
                     if ball2_position[0] <= 0:
                         player_scores[1] += 1
                         ball2_active = False
+                        reset_game_state()
                     if ball2_position[0] >= 670:
                         player_scores[0] += 1
                         ball2_active = False
+                        reset_game_state()
 
                 # Handle ball and paddle collisions
                 if ball_position[0] <= 35 and player_positions[0] < ball_position[1] < player_positions[0] + player_heights[0]:
@@ -162,13 +164,26 @@ def handle_client(conn, player_id, player1_id, player2_id):
                             ball_size[0] = min(ball_size[0] * 1.5, 30)
                             ball_size[1] = min(ball_size[1] * 1.5, 30)
                         elif i == 6:
-                            ball_size[0] = max(ball_size[0] * 0.75, 10)
-                            ball_size[1] = max(ball_size[1] * 0.75, 10)
+                            ball_size[0] = max(ball_size[0] * 0.25, 10)
+                            ball_size[1] = max(ball_size[1] * 0.25, 10)
                         elif i == 7:
                             if not ball2_active:
                                 ball2_position = ball_position.copy()
                                 ball2_speed = [-ball_speed[0], ball_speed[1]]
                                 ball2_active = True
+                        elif i == 8:
+                            game_over = True
+                            if player_scores[0] > player_scores[1]:
+                                winner_name = get_username(player1_id)
+                            elif player_scores[1] > player_scores[0]:
+                                winner_name = get_username(player2_id)
+                            else:
+                                winner_name = "Tie"
+                            match_end_date = datetime.now(vn_tz).date()
+                            match_duration_str = str(match_end_date)
+                            save_match_to_db(player1_id, player2_id, player_scores[0], player_scores[1], match_duration_str, winner_name)
+                            break  # Exit the loop if the game is over
+                            
                         # Move the item to a new random position
                         item_positions[i] = [random.randint(0, 650), random.randint(0, 370)]
 
@@ -185,9 +200,8 @@ def handle_client(conn, player_id, player1_id, player2_id):
                     winner_name = "Tie"
 
                 if game_over:
-                    match_end_time = datetime.now(vn_tz)
-                    match_duration = (match_end_time - match_start_time).total_seconds()
-                    match_duration_str = str(datetime.fromtimestamp(match_duration, vn_tz).strftime('%H:%M:%S'))
+                    match_end_date = datetime.now(vn_tz).date()
+                    match_duration_str = str(match_end_date)
                     save_match_to_db(player1_id, player2_id, player_scores[0], player_scores[1], match_duration_str, winner_name)
 
             game_state = (ball_position, player_positions, player_heights, player_scores, item_positions, ball_size, ball2_active, ball2_position, ball2_speed, game_over, winner)
