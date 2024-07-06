@@ -41,7 +41,7 @@ def Result(rows, main_app, id1):
     email = [row[3] for row in rows]
 
     window = CTkToplevel(main_app)
-
+    window.title("Profile")
     window.geometry("850x500")
     window.configure(bg = "#2B5955")
     main_app.withdraw()
@@ -77,7 +77,7 @@ def Result(rows, main_app, id1):
                         bg_color='transparent', corner_radius=10)
     back_btn.place(x=10, y=20)
     
-    cursor.execute("SELECT * FROM FRIENDS WHERE ((id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s)) AND status = 'accepted'", [id1, id2[0], id2[0], id1])
+    cursor.execute("SELECT * FROM FRIENDS WHERE ((id_user1 = %s AND id_user2 = %s) OR (id_user1 = %s AND id_user2 = %s))", [id1, id2[0], id2[0], id1])
     result = cursor.fetchall()
     print(result)
     if result:

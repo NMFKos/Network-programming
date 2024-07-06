@@ -2,6 +2,7 @@ from customtkinter import CTk, CTkCanvas, CTkButton, CTkImage, CTkLabel, CTkText
 import mysql.connector
 from pathlib import Path
 from PIL import Image, ImageTk
+from tkinter import messagebox
 from Results import Result
 
 import os
@@ -25,8 +26,7 @@ def Find(main_app, id1):
             cursor.execute("SELECT * FROM users WHERE Tên_người_dùng = %s", (name,))
             result = cursor.fetchall()
             if not result:
-                NotFound_label = CTkLabel(window, text="User Not Found", font=("OpenSans Regular", 20))
-                NotFound_label.place(x=220, y=220)
+                messagebox.showinfo("Thông báo", "Không tìm thấy người dùng")
                 print("No user found")
             else:
                 Result(result, window, id1)
@@ -66,8 +66,3 @@ def Find(main_app, id1):
     back_btn = CTkButton(window, text="Quay lại", width=120, height=30, command=lambda: go_back(window, main_app)).place(x=10, y=10)
 
     window.mainloop()
-
-if __name__ == "__main__":
-    root = CTk()
-    Find(root, id)
-    root.mainloop()
