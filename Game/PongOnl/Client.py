@@ -2,7 +2,6 @@ import pygame
 import sys
 import socket
 import pickle
-import random
 
 # Initialize Pygame
 pygame.init()
@@ -42,7 +41,12 @@ HOST = 'localhost'  # Server IP address
 PORT = 5555
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((HOST, PORT))
+try:
+    client.connect((HOST, PORT))
+except Exception as e:
+    print(f"Unable to connect to the server: {e}")
+    pygame.quit()
+    sys.exit()
 
 # Receive initial game state from server
 try:
@@ -66,25 +70,19 @@ except Exception as e:
     sys.exit()
 
 # Define item rectangles
-item = pygame.Rect(item_positions[0][0], item_positions[0][1], 30, 30)
-item2 = pygame.Rect(item_positions[1][0], item_positions[1][1], 30, 30)
-item3 = pygame.Rect(item_positions[2][0], item_positions[2][1], 30, 30)
-item5 = pygame.Rect(item_positions[3][0], item_positions[3][1], 30, 30)
-item6 = pygame.Rect(item_positions[4][0], item_positions[4][1], 30, 30)
-item7 = pygame.Rect(item_positions[5][0], item_positions[5][1], 30, 30)
-item8 = pygame.Rect(item_positions[6][0], item_positions[6][1], 30, 30)
-item9 = pygame.Rect(item_positions[7][0], item_positions[7][1], 30, 30)
+items = [pygame.Rect(pos[0], pos[1], 30, 30) for pos in item_positions]
 
 # Load item images
 item_images = [
-    pygame.image.load('img/tangtoc.jpg').convert_alpha(),
-    pygame.image.load('img/giamtoc.jpg').convert_alpha(),
+    pygame.image.load('img/tangtoc.png').convert_alpha(),
+    pygame.image.load('img/giamtoc.png').convert_alpha(),
     pygame.image.load('img/doihuong.png').convert_alpha(),
     pygame.image.load('img/x2diem.png').convert_alpha(),
     pygame.image.load('img/smallerbar.png').convert_alpha(),
-    pygame.image.load('img/bigball.png').convert_alpha(),
-    pygame.image.load('img/smallball.png').convert_alpha(),
+    pygame.image.load('img/upsizeball.png').convert_alpha(),
+    pygame.image.load('img/downsizeball.png').convert_alpha(),
     pygame.image.load('img/plusball.png').convert_alpha(),
+    pygame.image.load('img/exit.png').convert_alpha(),
 ]
 item_images = [pygame.transform.scale(img, (30, 30)) for img in item_images]
 
@@ -113,11 +111,11 @@ while running:
             player2.y += 6
 
     # Send the new position to the server
-    player_positions[player_id] = player1.y if player_id == 0 else player2.y
-    client.send(pickle.dumps({'position': player_positions[player_id]}))
-
-    # Receive updated game state from server
     try:
+        player_positions[player_id] = player1.y if player_id == 0 else player2.y
+        client.send(pickle.dumps({'position': player_positions[player_id]}))
+
+        # Receive updated game state from server
         data = client.recv(1024)
         if not data:
             raise Exception("No data received from server")
@@ -133,14 +131,8 @@ while running:
         player1_score, player2_score = player_scores
 
         # Update item positions
-        item.x, item.y = item_positions[0]
-        item2.x, item2.y = item_positions[1]
-        item3.x, item3.y = item_positions[2]
-        item5.x, item5.y = item_positions[3]
-        item6.x, item6.y = item_positions[4]
-        item7.x, item7.y = item_positions[5]
-        item8.x, item8.y = item_positions[6]
-        item9.x, item9.y = item_positions[7]
+        for i, pos in enumerate(item_positions):
+            items[i].x, items[i].y = pos
 
         if game_over:
             win_text = "Player 1 wins!" if winner == 0 else "Player 2 wins!"
@@ -149,8 +141,8 @@ while running:
             pygame.display.update()
             pygame.time.wait(6000)
             running = False
-    except Exception as e:
-        print(f"Error receiving game state from server: {e}")
+    except (ConnectionResetError, Exception) as e:
+        print(f"Connection error: {e}")
         client.close()
         pygame.quit()
         sys.exit()
@@ -165,14 +157,8 @@ while running:
     pygame.draw.aaline(screen, white, (screen_width // 2, 0), (screen_width // 2, screen_height))
 
     # Draw items
-    screen.blit(item_images[0], item)
-    screen.blit(item_images[1], item2)
-    screen.blit(item_images[2], item3)
-    screen.blit(item_images[3], item5)
-    screen.blit(item_images[4], item6)
-    screen.blit(item_images[5], item7)
-    screen.blit(item_images[6], item8)
-    screen.blit(item_images[7], item9)
+    for item, img in zip(items, item_images):
+        screen.blit(img, item)
 
     # Display scores
     font = pygame.font.Font(None, 74)
